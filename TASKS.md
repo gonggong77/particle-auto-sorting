@@ -157,7 +157,7 @@
   - OiL 오버플로: 진한 빨강 (적용 차단)
 - 경고 있는 엔트리 테두리에 색상 적용
 
-### [ ] #12 Renderer 테이블 UI (Above/Below 섹션)
+### [x] #12 Renderer 테이블 UI (Above/Below 섹션)
 - **BlockedBy**: #11, #5
 - 확장 시 Above/Below 섹션별 테이블 렌더링
 - 컬럼: 오브젝트명, Material(같은 Material = 같은 색 pill + ⓘ 아이콘 if Instancing off), OiL before/after, Fudge before/after
@@ -166,7 +166,7 @@
 - 인터리브 연루 행에 ⚠ 아이콘 + 호버 툴팁
 - 확장 섹션 상단에 인터리브된 Material 쌍 목록
 
-### [ ] #13 하단 버튼 영역 (재계산/Undo/적용) + 전체 배치 수 + 전체 선택/해제
+### [x] #13 하단 버튼 영역 (재계산/Undo/적용) + 전체 배치 수 + 전체 선택/해제
 - **BlockedBy**: #11, #5, #7
 - 수평 레이아웃:
   - **전체 선택/해제 토글** (체크박스 또는 버튼, 현재 상태가 전부 체크면 "전체 해제", 아니면 "전체 선택")
@@ -176,14 +176,14 @@
   - Undo 버튼 (Unity Undo 시스템 호출, 직전 적용분 일괄 되돌림)
   - 적용 버튼 (primary 스타일, PrefabApplier.Apply 호출 — 체크된 것만 전달)
 
-### [ ] #14 CSV 내보내기 UI 패널
+### [x] #14 CSV 내보내기 UI 패널
 - **BlockedBy**: #11, #8
 - 섹션 "보고서 내보내기 (CSV)"
 - 경로 입력 필드 (편집 가능)
 - 찾아보기 버튼 (`EditorUtility.SaveFilePanel`)
 - 내보내기 버튼 (`CsvReportExporter` 호출)
 
-### [ ] #15 하단 상태 표시줄
+### [x] #15 하단 상태 표시줄
 - **BlockedBy**: #9
 - 표시 상태: "분석 중", "적용 중", "완료", 등록된 프리팹 수
 - 타임스탬프 없음
