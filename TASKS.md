@@ -44,15 +44,15 @@
 - **Enum (동일 파일 내 선언)**: `RendererKind { Particle, Trail_Component, Trail_Module }`
 - **Fields**: ObjectName, Renderer, SharedMaterial, RenderMode, Mesh, SortingLayerID, HierarchyOrder(Trail offset 포함), GroupTag, Kind(RendererKind), OilBefore, FudgeBefore, OilAfterAI, FudgeAfterAI, OilOverride(nullable), FudgeOverride(nullable), HasInterleaveWarning, InterleavedWith(List&lt;string&gt;), IsInstancingDisabled
 
-### [ ] #2 MaterialGroupInfo.cs 데이터 모델 작성
+### [x] #2 MaterialGroupInfo.cs 데이터 모델 작성
 - **File**: `Assets/Editor/Data/MaterialGroupInfo.cs`
 - **BlockedBy**: #16
 - **Fields**: SharedMaterial, Members(List&lt;RendererInfo&gt;), RepresentativeOrder(min hierarchyOrder), AssignedOrderInLayer, GroupColor(UI pill용)
 
-### [ ] #3 PrefabData.cs 데이터 모델 작성
+### [x] #3 PrefabData.cs 데이터 모델 작성
 - **File**: `Assets/Editor/Data/PrefabData.cs`
 - **BlockedBy**: #16
-- **Fields**: Prefab(GameObject), Renderers(List&lt;RendererInfo&gt;), Warnings(List&lt;string&gt;), BatchBefore, BatchAfter, IsExpanded, HasAboveBelow
+- **Fields**: Prefab(GameObject), Renderers(List&lt;RendererInfo&gt;), Warnings(List&lt;string&gt;), BatchBefore, BatchAfter, IsExpanded, HasAboveBelow, HasOverflow(적용 차단용), IsSelectedForApply(체크박스 상태, 기본 true)
 
 ---
 
