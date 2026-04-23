@@ -58,7 +58,7 @@
 
 ## Phase 2 — 분석 레이어
 
-### [ ] #4 PrefabAnalyzer.cs 프리팹 스캔 구현
+### [x] #4 PrefabAnalyzer.cs 프리팹 스캔 구현
 - **File**: `Assets/Editor/Analysis/PrefabAnalyzer.cs`
 - **BlockedBy**: #1, #2, #3
 - Above/Below 루트 탐색 (없으면 경고)
@@ -70,7 +70,7 @@
 - null Material silent skip
 - Sub Emitter 해석 실패 시 경고
 
-### [ ] #5 BatchCounter.cs 배치 수 계산 구현
+### [x] #5 BatchCounter.cs 배치 수 계산 구현
 - **File**: `Assets/Editor/Analysis/BatchCounter.cs`
 - **BlockedBy**: #1, #4
 - BatchKey = `[sortingLayerID, sharedMaterial, renderMode, mesh]`
