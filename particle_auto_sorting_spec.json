@@ -1,0 +1,362 @@
+{
+  "project": {
+    "name": "Particle Auto Sorting",
+    "type": "Unity Editor Tool",
+    "language": "C#",
+    "target": "Unity Editor (EditorWindow)",
+    "menu_path": "Tools/particle auto sorting",
+    "purpose": "파티클 시스템의 Order in Layer, Sorting Fudge 값을 배치 수 최소화와 드로우 순서 정렬을 동시에 고려하여 자동 세팅"
+  },
+
+  "spec": {
+    "goal": [
+      "배치 수(Draw Call) 최소화",
+      "드로우 순서 보장 (Hierarchy 하단일수록 앞에 렌더링)",
+      "같은 Material끼리 동일 Order in Layer 부여 (배칭 조건)",
+      "세팅 전/후 비교 및 보고서 출력"
+    ],
+    "inputs": [
+      "프리팹 (복수, 드래그앤드롭)",
+      "Char Sorting Order (전역 단일값, 기본 0)"
+    ],
+    "outputs": [
+      "각 Renderer의 추천 Order in Layer, Sorting Fudge",
+      "프리팹별 / 전체 배치 수 before-after",
+      "CSV 보고서"
+    ]
+  },
+
+  "prefab_structure_assumption": {
+    "description": "작업자가 의도적으로 Above/Below 구조를 만들어둠",
+    "hierarchy": {
+      "root": "프리팹 루트",
+      "children": [
+        {
+          "name": "Above",
+          "role": "parent_only",
+          "has_renderer": false,
+          "meaning": "char보다 양수 Order in Layer 영역"
+        },
+        {
+          "name": "Below",
+          "role": "parent_only",
+          "has_renderer": false,
+          "meaning": "char보다 음수 Order in Layer 영역"
+        }
+      ]
+    },
+    "rendering_rule": "Above/Below 각각의 자식들은 Hierarchy 상에서 하단에 위치할수록 제일 앞에 그려져야 함"
+  },
+
+  "sorting_rules": {
+    "priority": [
+      {
+        "order": 1,
+        "rule": "같은 Material끼리 동일 Order in Layer 부여",
+        "purpose": "배치 최적화 (배칭 묶기)"
+      },
+      {
+        "order": 2,
+        "rule": "Hierarchy 하단 우선 렌더링 규칙에 맞춰 Sorting Fudge 미세 조정",
+        "purpose": "드로우 순서 보정"
+      }
+    ],
+    "char_reference": {
+      "value_source": "사용자가 수동 입력하는 Char Sorting Order",
+      "above_range": "char + N (양수)",
+      "below_range": "char - N (음수)",
+      "default": 0,
+      "no_range_limit": true
+    }
+  },
+
+  "batch_count_calculation": {
+    "description": "모든 파티클이 동시에 출력된다는 전제 하의 배치 수 계산",
+    "include": [
+      "활성화된 ParticleSystemRenderer (enabled + activeInHierarchy)",
+      "활성화된 TrailRenderer",
+      "Sub Emitter로 쓰이는 파티클 (자식 오브젝트로 존재하면 포함)"
+    ],
+    "exclude": [
+      "비활성화된 GameObject / ParticleSystem",
+      "Material이 null인 Renderer (silent, 알림 없음)"
+    ],
+    "algorithm": {
+      "step_1": "Above/Below 그룹별로 활성 Renderer 수집",
+      "step_2": {
+        "description": "각 Renderer에서 키 추출",
+        "batch_key": ["sharedMaterial", "renderMode", "mesh"],
+        "sort_key": ["sortingLayerID", "orderInLayer", "sortingFudge", "hierarchyOrder"],
+        "notes": [
+          "TrailRenderer의 경우 Trail 전용 Material 기준으로 BatchKey 구성",
+          "hierarchyOrder: 위에서 아래로 진행, 뒤→앞 판정",
+          "같은 GameObject 내 Particle/Trail 공존 시: Particle 먼저, Trail 나중 (Trail이 시각적으로 앞)"
+        ]
+      },
+      "step_3": "그룹별로 SortKey 기준 정렬 (뒤→앞)",
+      "step_4": {
+        "description": "정렬된 리스트 순회하며 BatchKey 변경 횟수 카운트",
+        "pseudocode": "batchCount = 0; prevKey = null; for r in sortedRenderers: if r.BatchKey != prevKey: batchCount += 1; prevKey = r.BatchKey"
+      },
+      "step_5": "Above 배치 수 + Below 배치 수 = 전체 배치 수 (Above와 Below 사이는 char가 끼므로 자동으로 끊김)"
+    }
+  },
+
+  "edge_cases": {
+    "inactive_objects": {
+      "policy": "exclude_from_count",
+      "user_notification": "warning_on_prefab_entry"
+    },
+    "sub_emitters": {
+      "policy": "include_as_normal_child",
+      "rationale": "자식 오브젝트로 존재하면 자연히 포함됨. 전체 동시 출력 전제와 일관됨"
+    },
+    "trail_renderers": {
+      "policy": "include_in_count",
+      "order_within_same_gameobject": "particle_first_then_trail"
+    },
+    "null_material": {
+      "policy": "silent_skip",
+      "user_notification": "none"
+    },
+    "sorting_fudge_tiebreaker": {
+      "policy": "trust_hierarchy_order",
+      "rule": "Hierarchy 위→아래 = 뒤→앞"
+    },
+    "subemitter_resolution_failure": {
+      "policy": "warn_user",
+      "display": "warning pill on prefab entry"
+    }
+  },
+
+  "wireframe": {
+    "window": {
+      "type": "EditorWindow",
+      "menu_location": "Tools > particle auto sorting",
+      "title": "Particle auto sorting"
+    },
+
+    "sections": [
+      {
+        "id": "global_controls",
+        "layout": "horizontal",
+        "fields": [
+          {
+            "id": "char_sorting_order",
+            "label": "Char Sorting Order",
+            "type": "int_field",
+            "default": 0,
+            "range_limit": false,
+            "scope": "global_single_value"
+          },
+          {
+            "id": "edit_mode_toggle",
+            "label": "수정 모드",
+            "type": "toggle",
+            "default": "OFF",
+            "behavior": {
+              "OFF": "값 읽기 전용",
+              "ON": "Order in Layer와 Sorting Fudge 둘 다 편집 가능"
+            }
+          }
+        ]
+      },
+
+      {
+        "id": "prefab_registration",
+        "label": "프리팹 등록",
+        "type": "drag_and_drop_zone",
+        "rules": {
+          "multi_register": true,
+          "duplicate_policy": "warn_and_reject",
+          "remove_method": "x_button_on_each_entry"
+        }
+      },
+
+      {
+        "id": "prefab_list",
+        "type": "list",
+        "entry_structure": {
+          "header": {
+            "expand_toggle": "▼/▶",
+            "name": "prefab filename",
+            "summary": "배치 수 before → after",
+            "remove_button": "×",
+            "warning_pill": "optional, visible if warnings exist"
+          },
+          "body_when_expanded": {
+            "sections": [
+              {
+                "label": "ABOVE",
+                "style": "section_header",
+                "content": "renderer_table"
+              },
+              {
+                "label": "BELOW",
+                "style": "section_header",
+                "content": "renderer_table"
+              }
+            ],
+            "renderer_table_columns": [
+              {
+                "id": "object_name",
+                "label": "오브젝트",
+                "type": "text"
+              },
+              {
+                "id": "material",
+                "label": "Material",
+                "type": "colored_pill",
+                "note": "같은 Material은 같은 색상 (배칭 그룹 시각화)"
+              },
+              {
+                "id": "order_in_layer",
+                "label": "Order in Layer",
+                "type": "before_after",
+                "editable_in_edit_mode": true,
+                "modified_indicator": "파란색 강조 (AI 예측값과 다른 경우)"
+              },
+              {
+                "id": "sorting_fudge",
+                "label": "Sorting Fudge",
+                "type": "before_after",
+                "editable_in_edit_mode": true,
+                "modified_indicator": "파란색 강조 (AI 예측값과 다른 경우)"
+              }
+            ]
+          }
+        },
+        "warning_types_on_entry": [
+          "Above/Below 구조 누락",
+          "비활성화된 오브젝트 포함",
+          "Sub Emitter 관계 해석 실패",
+          "중복 등록 시도"
+        ]
+      },
+
+      {
+        "id": "summary_and_actions",
+        "layout": "horizontal",
+        "components": [
+          {
+            "id": "total_batch_summary",
+            "type": "text_numeric",
+            "label": "전체 배치 수",
+            "format": "before → after",
+            "style": "numbers_only_no_graph_no_emphasis"
+          },
+          {
+            "id": "recalculate_button",
+            "label": "재계산",
+            "type": "button",
+            "purpose": "수정 모드에서 사용자가 값을 바꾼 뒤 배치 수 재계산"
+          },
+          {
+            "id": "undo_button",
+            "label": "Undo",
+            "type": "button",
+            "scope": "일괄 Undo (직전 적용분 전체 되돌림)"
+          },
+          {
+            "id": "apply_button",
+            "label": "적용",
+            "type": "button_primary",
+            "behavior": "클릭 시 확인 대화상자 표시 → OK 시 PrefabUtility로 적용",
+            "apply_scope": "등록된 모든 프리팹 일괄 적용"
+          }
+        ]
+      },
+
+      {
+        "id": "report_export",
+        "label": "보고서 내보내기 (CSV)",
+        "components": [
+          {
+            "id": "path_input",
+            "type": "path_field",
+            "user_editable": true
+          },
+          {
+            "id": "browse_button",
+            "label": "찾아보기",
+            "type": "button",
+            "opens": "file_save_panel"
+          },
+          {
+            "id": "export_button",
+            "label": "내보내기",
+            "type": "button"
+          }
+        ],
+        "csv_contents": [
+          "프리팹 이름",
+          "오브젝트명",
+          "Above/Below 구분",
+          "Material",
+          "Order in Layer before/after",
+          "Sorting Fudge before/after",
+          "프리팹별 배치 수 before/after",
+          "전체 배치 수 before/after"
+        ]
+      },
+
+      {
+        "id": "status_bar",
+        "position": "bottom",
+        "type": "status_feedback",
+        "shows": [
+          "분석 중",
+          "적용 중",
+          "완료",
+          "등록된 프리팹 수"
+        ],
+        "timestamp": false
+      }
+    ],
+
+    "visual_conventions": {
+      "material_color_grouping": "같은 Material = 같은 색 pill",
+      "modified_value_indicator": "수정 모드에서 AI 예측값과 다른 값은 파란색 강조",
+      "warning_border": "경고가 있는 프리팹 엔트리는 warning 색 테두리 + pill"
+    },
+
+    "not_included_in_wireframe_stage": [
+      "창 레이아웃 정확한 비율 (임의 설정 허용)",
+      "바 그래프",
+      "개선 강조 색상/이모지",
+      "타임스탬프"
+    ]
+  },
+
+  "implementation_hints": {
+    "unity_apis": [
+      "EditorWindow, EditorGUILayout, EditorGUI",
+      "DragAndDrop (드래그앤드롭)",
+      "PrefabUtility.SavePrefabAsset (프리팹 저장)",
+      "Undo.RecordObject, Undo.RegisterCompleteObjectUndo (Undo 지원)",
+      "ParticleSystemRenderer, TrailRenderer (Renderer 접근)",
+      "EditorUtility.SaveFilePanel (CSV 경로 선택)",
+      "EditorUtility.DisplayDialog (적용 확인 대화상자)"
+    ],
+    "file_structure_suggestion": [
+      "Editor/ParticleAutoSortingWindow.cs (EditorWindow 진입점)",
+      "Editor/Analysis/PrefabAnalyzer.cs (프리팹 스캔 + Renderer 수집)",
+      "Editor/Analysis/BatchCounter.cs (배치 수 계산)",
+      "Editor/Optimization/SortingOptimizer.cs (Order in Layer, Sorting Fudge 계산)",
+      "Editor/Apply/PrefabApplier.cs (적용 + Undo)",
+      "Editor/Report/CsvReportExporter.cs (CSV 내보내기)",
+      "Editor/Data/*.cs (데이터 모델)"
+    ],
+    "pending_decisions_for_implementation_stage": [
+      "Order in Layer 값 할당 증분 단위 (char+1,+2,+3 식인지 char+10,+20,+30 식인지)",
+      "Sorting Fudge 조정 값 단위 (0.1 간격 권장)",
+      "보고서 CSV 인코딩 (UTF-8 BOM 권장, Excel 한글 호환)"
+    ]
+  },
+
+  "process_status": {
+    "completed": ["Spec", "Wireframe"],
+    "next_stages": ["Plan", "Task", "Implementation"],
+    "note": "Plan 이후는 Claude Code에서 진행"
+  }
+}
