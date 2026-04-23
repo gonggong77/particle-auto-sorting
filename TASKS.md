@@ -83,7 +83,7 @@
 
 ## Phase 3 — 최적화 레이어
 
-### [ ] #6 SortingOptimizer.cs OiL/Fudge 최적화 구현
+### [x] #6 SortingOptimizer.cs OiL/Fudge 최적화 구현
 - **File**: `Assets/Editor/Optimization/SortingOptimizer.cs`
 - **BlockedBy**: #1, #2, #5
 - Material 그룹핑 후 대표 순서 = min(hierarchyOrder)
