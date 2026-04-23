@@ -115,7 +115,7 @@
 
 ## Phase 5 — 보고서
 
-### [ ] #8 CsvReportExporter.cs CSV 내보내기 구현
+### [x] #8 CsvReportExporter.cs CSV 내보내기 구현
 - **File**: `Assets/Editor/Report/CsvReportExporter.cs`
 - **BlockedBy**: #1, #3, #6
 - UTF-8 BOM 인코딩 (`new UTF8Encoding(true)`)
