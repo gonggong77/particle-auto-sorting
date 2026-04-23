@@ -127,7 +127,7 @@
 
 ## Phase 6 — UI
 
-### [ ] #9 ParticleAutoSortingWindow 뼈대 + 전역 컨트롤
+### [x] #9 ParticleAutoSortingWindow 뼈대 + 전역 컨트롤
 - **File**: `Assets/Editor/ParticleAutoSortingWindow.cs`
 - **BlockedBy**: #16
 - MenuItem `"Tools/particle auto sorting"`로 창 오픈
