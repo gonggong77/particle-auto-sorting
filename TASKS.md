@@ -98,7 +98,7 @@
 
 ## Phase 4 — 적용 레이어
 
-### [ ] #7 PrefabApplier.cs 적용 + Undo 구현
+### [x] #7 PrefabApplier.cs 적용 + Undo 구현
 - **File**: `Assets/Editor/Apply/PrefabApplier.cs`
 - **BlockedBy**: #1, #6
 - **적용 차단 조건 (최우선 체크)**: 체크된 프리팹 중 하나라도 OiL 오버플로(`HasOverflow`) 있으면 에러 대화상자 띄우고 적용 전체 중단 — 사용자가 Char Sorting Order 값을 수정하거나 해당 프리팹을 해제해야 진행 가능
