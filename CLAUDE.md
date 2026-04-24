@@ -47,16 +47,16 @@ partial class는 200~250줄 단위로 분할 유지.
 
 - **프리팹 구조 가정**: 루트 아래 `Above`/`Below` 자식이 있고, 각각의 자식들이 char(캐릭터) 위/아래 영역. 작업자가 의도적으로 만들어둔 구조.
 - **렌더링 규칙**: Above/Below 각각의 자식들은 Hierarchy 하단일수록 앞에 그려져야 함.
-- **OiL 할당**: Above = `charSortingOrder + 1, +2, …` / Below = `charSortingOrder - N, …, -1`. **short 범위(-32768~32767) 클램프 금지**, 오버플로 시 `HasOverflow = true` + 적용 차단.
-- **Fudge 할당**: 동일 Material 그룹 내에서 `step = 30` 고정, `fudge[rank] = (size - 1 - rank) * step` (rank 0 = 가장 위 = 뒤 = 최대 Fudge). 예) size=4 → [90, 60, 30, 0].
+- **Material 런(run)**: Hierarchy 순서(위→아래)로 정렬한 뒤, **연속된 동일 Material 구간**을 하나의 런으로 본다. 같은 Material 이라도 중간에 다른 Material 이 끼어들면 별도 런이다. OiL/Fudge 할당은 Material 전체가 아니라 이 **런 단위**로 이루어진다.
+- **OiL 할당**: 각 런에 하나의 OiL. Above = `charSortingOrder + 1, +2, …, +N` / Below = `charSortingOrder - N, …, -1` (N = 해당 bucket 의 런 개수, Hierarchy 위→아래 순). **short 범위(-32768~32767) 클램프 금지**, 오버플로 시 `HasOverflow = true` + 적용 차단.
+- **Fudge 할당**: 동일 런 내에서 `step = 30` 고정, `fudge[rank] = (size - 1 - rank) * step` (rank 0 = 런 최상단 = 뒤 = 최대 Fudge, 최하단 = 0). 예) size=4 → [90, 60, 30, 0].
 - **BatchKey**: `[sortingLayerID, sharedMaterial, renderMode, mesh]`
 - **SortKey**: `[sortingLayerID, orderInLayer, sortingFudge, hierarchyOrder]`
 - **HierarchyOrder**: 같은 GameObject의 Particle/Trail 공존 시 Trail = Particle + 0.5 (Trail이 시각적으로 앞)
-- **인터리브 감지**: 정렬된 리스트에서 Material 그룹별 위치 인덱스를 모아 `max(A) > min(B) AND max(B) > min(A)` 시 경고.
-- **오브젝트 단위 불변식** (인터리브 없을 때 보장):
-  1. **OrderInLayer 단조성**: Hierarchy에서 인접한 두 오브젝트 A(위), B(아래)에 대해 `B.OrderInLayer >= A.OrderInLayer`. 같은 Material 그룹이면 동일 OrderInLayer(등호), 그 외엔 엄격히 증가. (OiL은 오브젝트 단위가 아니라 **Material 그룹 단위**로 할당되므로 +1, +2… 의 증분은 **그룹 수** 기준이다.)
-  2. **Fudge 단조성**: OrderInLayer가 같은(= 동일 Material 그룹) 두 오브젝트 A(위), B(아래)에 대해 `B.sortingFudge < A.sortingFudge`. 그룹 최하단은 항상 0, 최상단은 `(size-1)*30`.
-- 위 두 불변식은 인터리브 케이스(서로 다른 Material 그룹이 Hierarchy 순서로 교차)에서는 깨진다 → `DetectInterleave`가 감지하여 `HasInterleaveWarning` + 경고 pill.
+- **오브젝트 단위 불변식** (런 기반 할당으로 **항상 보장**):
+  1. **OrderInLayer 단조성**: Hierarchy에서 인접한 두 오브젝트 A(위), B(아래)에 대해 `B.OrderInLayer >= A.OrderInLayer`. 같은 런이면 동일 OrderInLayer(등호), 런 경계면 엄격히 증가.
+  2. **Fudge 단조성**: OrderInLayer가 같은(= 동일 런) 두 오브젝트 A(위), B(아래)에 대해 `B.sortingFudge < A.sortingFudge`. 런 최하단은 항상 0, 최상단은 `(size-1)*30`.
+- **인터리브 감지**: 동일 Material 이 여러 런으로 쪼개지면(= Hierarchy 상 다른 Material 이 중간에 끼어든 경우) `HasInterleaveWarning` + 경고 pill. 불변식은 이미 보장되지만, **배치 수가 최적이 아님**을 사용자에게 알려 Hierarchy 재배치를 유도하는 목적.
 - **null Material**: silent skip (알림 없음)
 - **비활성 오브젝트**: 카운트 제외 + 경고 pill
 
