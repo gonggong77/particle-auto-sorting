@@ -59,7 +59,7 @@ partial class는 200~250줄 단위로 분할 유지.
 - **인터리브 감지**: 동일 Material 이 여러 런으로 쪼개지면(= Hierarchy 상 다른 Material 이 중간에 끼어든 경우) `HasInterleaveWarning` + 경고 pill. 불변식은 이미 보장되지만, **배치 수가 최적이 아님**을 사용자에게 알려 Hierarchy 재배치를 유도하는 목적.
 - **null Material**: silent skip (알림 없음)
 - **비활성 오브젝트**: 카운트 제외 + 경고 pill
-- **CSV "프리팹 내 누적 배치 수" 컬럼**: Frame Debugger 스타일. SortKey 전역 정렬로 배치 인덱스를 부여한 뒤 Hierarchy 순서로 prefix distinct-count 를 누적. 프리팹마다 1 로 리셋. 컬럼 11-12(전체 배치 수)는 프리팹 총합 그대로.
+- **CSV "프리팹 내 누적 배치 수" 컬럼**: Frame Debugger 스타일. Above/Below **그룹 단위로** SortKey 정렬 → 연속 동일 BatchKey 런마다 그룹 내 batchIndex 부여 → 그룹별로 offset 을 더해 전역 유니크 ID 화 → Hierarchy 순서로 prefix distinct-count 누적. Above/Below 는 char 가 끼어 별도 렌더 패스이므로 절대 merge 금지 (`CountAcrossGroups` 와 동일 전제). 프리팹마다 1 로 리셋. 컬럼 11-12(전체 배치 수)는 프리팹 총합 그대로.
 
 ## 워크플로 (현재 단계: 실사용 검증 + 버그 수정)
 
