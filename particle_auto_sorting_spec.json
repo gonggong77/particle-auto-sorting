@@ -349,7 +349,7 @@
     ],
     "pending_decisions_for_implementation_stage": [
       "Order in Layer 값 할당 증분 단위 (char+1,+2,+3 식인지 char+10,+20,+30 식인지)",
-      "Sorting Fudge 조정 값 단위 (0.1 간격 권장)",
+      "Sorting Fudge 조정 값 단위 (30 고정 간격, 2026-04-24 결정)",
       "보고서 CSV 인코딩 (UTF-8 BOM 권장, Excel 한글 호환)"
     ]
   },

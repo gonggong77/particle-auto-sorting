@@ -48,7 +48,7 @@ partial class는 200~250줄 단위로 분할 유지.
 - **프리팹 구조 가정**: 루트 아래 `Above`/`Below` 자식이 있고, 각각의 자식들이 char(캐릭터) 위/아래 영역. 작업자가 의도적으로 만들어둔 구조.
 - **렌더링 규칙**: Above/Below 각각의 자식들은 Hierarchy 하단일수록 앞에 그려져야 함.
 - **OiL 할당**: Above = `charSortingOrder + 1, +2, …` / Below = `charSortingOrder - N, …, -1`. **short 범위(-32768~32767) 클램프 금지**, 오버플로 시 `HasOverflow = true` + 적용 차단.
-- **Fudge 할당**: 동일 Material 그룹 내에서 `step = min(0.1, 0.9 / (size - 1))`, `fudge[rank] = (size - 1 - rank) * step` (rank 0 = 가장 위 = 뒤 = 최대 Fudge).
+- **Fudge 할당**: 동일 Material 그룹 내에서 `step = 30` 고정, `fudge[rank] = (size - 1 - rank) * step` (rank 0 = 가장 위 = 뒤 = 최대 Fudge). 예) size=4 → [90, 60, 30, 0].
 - **BatchKey**: `[sortingLayerID, sharedMaterial, renderMode, mesh]`
 - **SortKey**: `[sortingLayerID, orderInLayer, sortingFudge, hierarchyOrder]`
 - **HierarchyOrder**: 같은 GameObject의 Particle/Trail 공존 시 Trail = Particle + 0.5 (Trail이 시각적으로 앞)
