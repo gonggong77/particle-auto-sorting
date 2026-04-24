@@ -53,6 +53,10 @@ partial class는 200~250줄 단위로 분할 유지.
 - **SortKey**: `[sortingLayerID, orderInLayer, sortingFudge, hierarchyOrder]`
 - **HierarchyOrder**: 같은 GameObject의 Particle/Trail 공존 시 Trail = Particle + 0.5 (Trail이 시각적으로 앞)
 - **인터리브 감지**: 정렬된 리스트에서 Material 그룹별 위치 인덱스를 모아 `max(A) > min(B) AND max(B) > min(A)` 시 경고.
+- **오브젝트 단위 불변식** (인터리브 없을 때 보장):
+  1. **OrderInLayer 단조성**: Hierarchy에서 인접한 두 오브젝트 A(위), B(아래)에 대해 `B.OrderInLayer >= A.OrderInLayer`. 같은 Material 그룹이면 동일 OrderInLayer(등호), 그 외엔 엄격히 증가. (OiL은 오브젝트 단위가 아니라 **Material 그룹 단위**로 할당되므로 +1, +2… 의 증분은 **그룹 수** 기준이다.)
+  2. **Fudge 단조성**: OrderInLayer가 같은(= 동일 Material 그룹) 두 오브젝트 A(위), B(아래)에 대해 `B.sortingFudge < A.sortingFudge`. 그룹 최하단은 항상 0, 최상단은 `(size-1)*30`.
+- 위 두 불변식은 인터리브 케이스(서로 다른 Material 그룹이 Hierarchy 순서로 교차)에서는 깨진다 → `DetectInterleave`가 감지하여 `HasInterleaveWarning` + 경고 pill.
 - **null Material**: silent skip (알림 없음)
 - **비활성 오브젝트**: 카운트 제외 + 경고 pill
 
