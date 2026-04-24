@@ -295,7 +295,7 @@
           "Material",
           "Order in Layer before/after",
           "Sorting Fudge before/after",
-          "프리팹별 배치 수 before/after",
+          "프리팹 내 누적 배치 수 before/after",
           "전체 배치 수 before/after"
         ]
       },
