@@ -187,6 +187,16 @@
           "body_when_expanded": {
             "sections": [
               {
+                "id": "gpu_instancing_section",
+                "label": "GPU Instancing (수정 모드)",
+                "visible_when": "edit_mode_toggle == ON",
+                "scope": "per Material asset (프리팹 내 unique Material)",
+                "control": "toggle (per material)",
+                "applied_at": "기존 [적용] 버튼과 같은 Undo 그룹",
+                "warning_dialog": "변경되는 Material 자산 개수 + '다른 프리팹/씬에도 영향' 문구",
+                "conflict_policy": "여러 프리팹 간 동일 Material ON/OFF 충돌 시 적용 차단"
+              },
+              {
                 "label": "ABOVE",
                 "style": "section_header",
                 "content": "renderer_table"
@@ -198,6 +208,15 @@
               }
             ],
             "renderer_table_columns": [
+              {
+                "id": "hierarchy_reorder_handle",
+                "label": "행 순서 변경 핸들 (수정 모드)",
+                "visible_when": "edit_mode_toggle == ON",
+                "scope": "same-parent siblings only",
+                "unit": "GameObject (transform) — same-transform RendererInfo move together",
+                "control": "drag-and-drop reorder",
+                "applied_at": "기존 [적용] 버튼과 같은 Undo 그룹"
+              },
               {
                 "id": "object_name",
                 "label": "오브젝트",
@@ -250,6 +269,12 @@
             "label": "재계산",
             "type": "button",
             "purpose": "수정 모드에서 사용자가 값을 바꾼 뒤 배치 수 재계산"
+          },
+          {
+            "id": "preview_button",
+            "label": "미리보기 (수정 모드일 때 '재계산' 라벨 대체)",
+            "action": "RecomputeAll — OiL/Fudge/BatchAfter 재계산 (디스크 무변경)",
+            "dirty_indicator": "row 'NeedsPreviewRefresh' 뱃지"
           },
           {
             "id": "undo_button",
