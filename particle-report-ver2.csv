@@ -1,0 +1,9 @@
+프리팹명,오브젝트명,Above/Below,Material,OiL before,OiL after,Fudge before,Fudge after,프리팹 내 누적 배치 수 before,프리팹 내 누적 배치 수 after,전체 배치 수 before,전체 배치 수 after
+samplePrefab_after,above01_FXM_Dust03,Above,FXM_Dust03,0,1,0,30,1,1,8,6
+samplePrefab_after,above03_FXM_Dust03,Above,FXM_Dust03,1,1,0,0,2,1,8,6
+samplePrefab_after,above02_FXM_hit02,Above,FXM_hit02,0,2,0,0,3,2,8,6
+samplePrefab_after,above05_FXM_Dust03,Above,FXM_Dust03,4,3,0,0,4,3,8,6
+samplePrefab_after,above04_FXM_Dust04,Above,FXM_Dust04,0,4,0,30,5,4,8,6
+samplePrefab_after,above04_FXM_Dust04,Above,FXM_Dust04,2,4,0,0,6,4,8,6
+samplePrefab_after,below01_FXM_Dust03,Below,FXM_Dust03,0,-2,0,0,7,5,8,6
+samplePrefab_after,below02_FXM_hit02,Below,FXM_hit02,0,-1,0,0,8,6,8,6
