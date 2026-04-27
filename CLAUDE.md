@@ -49,7 +49,7 @@ partial class는 200~250줄 단위로 분할 유지.
 - **렌더링 규칙**: Above/Below 각각의 자식들은 Hierarchy 하단일수록 앞에 그려져야 함.
 - **Material 런(run)**: Hierarchy 순서(위→아래)로 정렬한 뒤, **연속된 동일 Material 구간**을 하나의 런으로 본다. 같은 Material 이라도 중간에 다른 Material 이 끼어들면 별도 런이다. OiL/Fudge 할당은 Material 전체가 아니라 이 **런 단위**로 이루어진다.
 - **OiL 할당**: 각 런에 하나의 OiL. Above = `charSortingOrder + 1, +2, …, +N` / Below = `charSortingOrder - N, …, -1` (N = 해당 bucket 의 런 개수, Hierarchy 위→아래 순). **short 범위(-32768~32767) 클램프 금지**, 오버플로 시 `HasOverflow = true` + 적용 차단.
-- **Fudge 할당**: 동일 런 내에서 `step = 30` 고정, `fudge[rank] = (size - 1 - rank) * step` (rank 0 = 런 최상단 = 뒤 = 최대 Fudge, 최하단 = 0). 예) size=4 → [90, 60, 30, 0].
+- **Fudge 할당**: 동일 런 내에서 `fudge[rank] = (size - 1 - rank) * step` (rank 0 = 런 최상단 = 뒤 = 최대 Fudge, 최하단 = 0). `step` default 30, **수정 모드 ON 시 TopBar 의 "Fudge 간격" IntField 로 사용자 지정 가능** (1~10000 클램프, 변경 시 자동 RecomputeAll). 예) step=30, size=4 → [90, 60, 30, 0].
 - **BatchKey**: `[sortingLayerID, sharedMaterial, renderMode, mesh]`
 - **SortKey**: `[sortingLayerID, orderInLayer, sortingFudge, hierarchyOrder]`
 - **HierarchyOrder**: 같은 GameObject의 Particle/Trail 공존 시 Trail = Particle + 0.5 (Trail이 시각적으로 앞)

@@ -158,6 +158,17 @@
               "OFF": "값 읽기 전용",
               "ON": "Order in Layer와 Sorting Fudge 둘 다 편집 가능"
             }
+          },
+          {
+            "id": "fudge_step",
+            "label": "Fudge 간격",
+            "type": "int_field",
+            "default": 30,
+            "min": 1,
+            "max": 10000,
+            "visible_when": "edit_mode_toggle == ON",
+            "scope": "global_single_value",
+            "behavior": "동일 런 내 인접 오브젝트 간 sortingFudge 차이. 변경 시 RecomputeAll 자동 호출."
           }
         ]
       },
@@ -374,7 +385,7 @@
     ],
     "pending_decisions_for_implementation_stage": [
       "Order in Layer 값 할당 증분 단위 (char+1,+2,+3 식인지 char+10,+20,+30 식인지)",
-      "Sorting Fudge 조정 값 단위 (30 고정 간격, 2026-04-24 결정)",
+      "Sorting Fudge 조정 값 단위 (default 30, 수정 모드에서 사용자 지정 가능 — 2026-04-27 변경)",
       "보고서 CSV 인코딩 (UTF-8 BOM 권장, Excel 한글 호환)"
     ]
   },
