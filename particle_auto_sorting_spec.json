@@ -133,7 +133,10 @@
     "window": {
       "type": "EditorWindow",
       "menu_location": "Tools > particle auto sorting",
-      "title": "Particle auto sorting"
+      "title": "Particle auto sorting",
+      "min_size": { "width": 980, "height": 600 },
+      "initial_size": { "width": 1240, "height": 880 },
+      "initial_layout": "최초 1회 한정으로 너비 1240×높이 880, prefab_list 영역은 창 높이의 70% 로 자동 세팅 (수정 모드 ON 기준 모든 툴바 컨트롤이 잘리지 않도록 보장). 사용자가 리사이즈하면 직렬화된 값을 우선한다."
     },
 
     "sections": [
