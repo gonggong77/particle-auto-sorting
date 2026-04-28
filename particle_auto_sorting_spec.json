@@ -205,7 +205,8 @@
                 "control": "toggle (per material)",
                 "applied_at": "기존 [적용] 버튼과 같은 Undo 그룹",
                 "warning_dialog": "변경되는 Material 자산 개수 + '다른 프리팹/씬에도 영향' 문구",
-                "conflict_policy": "여러 프리팹 간 동일 Material ON/OFF 충돌 시 적용 차단"
+                "conflict_policy": "여러 프리팹 간 동일 Material ON/OFF 충돌 시 적용 차단",
+                "shader_support_disclaimer": "섹션 헤더 바로 아래 HelpBox 한 줄: '⚠️ 이 기능은 Material의 GPU Instancing 토글만 제어합니다. 셰이더가 Instancing을 지원하지 않으면 토글을 켜도 효과가 없습니다.'"
               },
               {
                 "label": "ABOVE",
