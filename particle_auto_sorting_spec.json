@@ -169,6 +169,16 @@
             "visible_when": "edit_mode_toggle == ON",
             "scope": "global_single_value",
             "behavior": "동일 런 내 인접 오브젝트 간 sortingFudge 차이. 변경 시 RecomputeAll 자동 호출."
+          },
+          {
+            "id": "global_gpu_instancing_bulk",
+            "label": "GPU Inst",
+            "type": "button_group",
+            "buttons": ["모두 ON", "모두 OFF"],
+            "visible_when": "edit_mode_toggle == ON",
+            "disabled_when": "prefabs.count == 0",
+            "scope": "all registered prefabs × unique Materials",
+            "behavior": "등록된 모든 프리팹의 unique Material 에 대해 InstancingOverrides 를 일괄 설정. target == 실제 mat.enableInstancing 인 항목은 InstancingOverrides 에서 제거(변경 없음 표시), 다른 항목은 InstancingOverrides[mat] = target 으로 기록(변경 예정 표시). 실제 Material 자산은 [적용] 버튼 호출 전까지 변경되지 않음."
           }
         ]
       },
@@ -203,6 +213,7 @@
                 "visible_when": "edit_mode_toggle == ON",
                 "scope": "per Material asset (프리팹 내 unique Material)",
                 "control": "toggle (per material)",
+                "header_bulk_buttons": "섹션 헤더 우측에 [모두 ON] [모두 OFF] 두 버튼. 해당 프리팹의 모든 unique Material 에 대해 InstancingOverrides 를 일괄 설정 (target == 현재값이면 Remove, 다르면 Set).",
                 "applied_at": "기존 [적용] 버튼과 같은 Undo 그룹",
                 "warning_dialog": "변경되는 Material 자산 개수 + '다른 프리팹/씬에도 영향' 문구",
                 "conflict_policy": "여러 프리팹 간 동일 Material ON/OFF 충돌 시 적용 차단",
